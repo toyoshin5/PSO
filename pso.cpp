@@ -163,7 +163,7 @@ int main() {
     pso.optimize();    // PSOアルゴリズムの実行
     pso.print_best_solution();  // 最良の解を出力
 
-     // グリッドサーチの範囲を定義
+    // グリッドサーチの範囲を定義
     // vector<double> w_values = {0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
     // vector<double> c1_values = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5};
     // vector<double> c2_values = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5};

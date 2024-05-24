@@ -15,6 +15,11 @@ g++ -std=c++11 pso.cpp
 ./a.out
 ```
 
+時間を計測する場合
+```
+time ./a.out
+```
+
 # 課題
 10次元のRosenbrock関数の最適化を行った。
 Rosenbrock関数は次のように定義される。
