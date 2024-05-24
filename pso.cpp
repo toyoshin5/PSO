@@ -13,6 +13,7 @@ public:
     PSO(int num_particles, int dim, int iterations, double w, double c1, double c2);
     void initialize();
     void optimize();
+    double get_best_solution();
     void print_best_solution();
 
 private:
@@ -113,19 +114,68 @@ void PSO::print_best_solution() {
     cout << "評価値: " << fg << endl;
 }
 
-int main() {
-    const int NUM_PARTICLES = 100;  // 粒子の数
-    const int T = 1000;             // 実行回数
-    const int DIM = 5;              // 次元
-    const double W = 0.9;           // 慣性係数
-    const double C1 = 0.1;          // 認知係数
-    const double C2 = 0.1;          // 社会係数
+double PSO::get_best_solution() {
+    return fg;
+}
 
-    // PSOクラスのインスタンスを生成
+void grid_search(int num_particles, int dim, int iterations, const vector<double>& w_values, const vector<double>& c1_values, const vector<double>& c2_values) {
+    double best_fg = numeric_limits<double>::max();
+    vector<double> best_params(3);
+
+    for (double w : w_values) {
+        for (double c1 : c1_values) {
+            for (double c2 : c2_values) {
+                cout << "W: " << w << ", C1: " << c1 << ", C2: " << c2 << endl;
+                double avg_fg = 0.0;
+                for (int i = 0; i < 10; ++i) {
+                    PSO pso(num_particles, dim, iterations, w, c1, c2);
+                    pso.initialize();
+                    pso.optimize();
+                    avg_fg += pso.get_best_solution();
+                }
+                avg_fg /= 10.00000;
+                if (avg_fg < best_fg) {
+                    best_fg = avg_fg;
+                    best_params = {w, c1, c2};
+                }
+            }
+        }
+    }
+
+    cout << "最適なパラメータ:" << endl;
+    cout << "W: " << best_params[0] << ", C1: " << best_params[1] << ", C2: " << best_params[2] << endl;
+    cout << endl;
+    cout << "最小値: " << best_fg << endl;
+}
+
+
+int main() {
+    int NUM_PARTICLES = 100;  // 粒子の数
+    int T = 5000;             // 実行回数
+    const int DIM = 10;              // 次元
+    const double W = 0.55;           // 慣性係数
+    const double C1 = 0.1;          // 認知係数
+    const double C2 = 2.5;          // 社会係数
+
+    // // PSOクラスのインスタンスを生成
     PSO pso(NUM_PARTICLES, DIM, T, W, C1, C2);
     pso.initialize();  // 変数の初期化
     pso.optimize();    // PSOアルゴリズムの実行
     pso.print_best_solution();  // 最良の解を出力
+
+     // グリッドサーチの範囲を定義
+    // vector<double> w_values = {0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
+    // vector<double> c1_values = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5};
+    // vector<double> c2_values = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5};
+    vector<double> w_values = {0.55,0.6,0.65};
+    vector<double> c1_values = {0.0,0.1,0.2,0.3,0.4,0.5};
+    vector<double> c2_values = {2.5,2.6,2.7,2.8,2.9,3.0};
+
+    // グリッドサーチを実行
+    T = 100;
+    NUM_PARTICLES = 100;
+    //grid_search(NUM_PARTICLES, DIM, T, w_values, c1_values, c2_values);
+
 
     return 0;
 }
