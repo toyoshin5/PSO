@@ -8,17 +8,18 @@
 using namespace std;
 
 const int NUM_PARTICLES = 30;
-const int NUM_ITERATIONS = 100;
-const int DIM = 2; // 問題の次元
+const int T = 100; // 実行回数
+const int DIM = 5; // 次元
 const double W = 0.5;
-const double C1 = 2.0;
-const double C2 = 2.0;
+const double C1 = 2;
+const double C2 = 2;
 
 // 乱数生成器
 random_device rd;
 mt19937 gen(rd());
 uniform_real_distribution<> dis(0.0, 1.0);
-uniform_real_distribution<> pos_dis(-5.0, 5.0);
+uniform_real_distribution<> pos_dis(-2.048, 2.048);
+uniform_real_distribution<> vec_dis(-1, 1);
 
 // Rosenbrock関数の定義
 double rosenbrock(const vector<double>& x) {
@@ -41,6 +42,7 @@ fp: 各粒子の暫定解の評価値　fp[k]はk番目の粒子の暫定解の�
 */
 
 int main() {
+    // 変数の初期化(授業スライドの(1)(2))
     vector<vector<double>> x(NUM_PARTICLES, vector<double>(DIM));
     vector<vector<double>> v(NUM_PARTICLES, vector<double>(DIM, 0.0));
     vector<vector<double>> p = x;
@@ -48,15 +50,16 @@ int main() {
     vector<double> g(DIM);
     double fg = numeric_limits<double>::max();
 
-    // 粒子の初期化
+    // 粒子の初期化(授業スライドの(3))
     for (int k = 0; k < NUM_PARTICLES; ++k) {
         for (int d = 0; d < DIM; ++d) {
             x[k][d] = pos_dis(gen);
+            v[k][d] = vec_dis(gen);
         }
     }
 
-    // PSOのメインループ
-    for (int t = 0; t < NUM_ITERATIONS; ++t) {
+    for (int t = 0; t < T; ++t) {
+        // 粒子の位置の更新 (授業スライドの(4))
         for (int i = 0; i < NUM_PARTICLES; ++i) {
             for (int d = 0; d < DIM; ++d) {
                 x[i][d] += v[i][d];
@@ -73,7 +76,7 @@ int main() {
                 g = x[i];
             }
         }
-
+        // 粒子の速度の更新 (授業スライドの(4-5))   
         for (int i = 0; i < NUM_PARTICLES; ++i) {
             for (int d = 0; d < DIM; ++d) {
                 double r1 = dis(gen);
